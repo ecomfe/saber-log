@@ -1,19 +1,32 @@
 {
     "name": "saber-log",
-    "version": "0.1.1",
+    "version": "0.1.0",
     "description": "为知心所有行业提供nsclick统计模块",
     "main": "main",
     "maintainers": [
-        { "name": "easonyq", "email": "wangyisheng@outlook.com" }
+        {
+            "name": "easonyq",
+            "email": "wangyisheng@outlook.com"
+        }
     ],
     "contributors": [
-        { "name": "treelite", "email": "c.xinle@gmail.com" }
+        {
+            "name": "treelite",
+            "email": "c.xinle@gmail.com"
+        }
     ],
+    "dependencies": {
+        "saber-lang": "~0.3.1"
+    },
     "scripts": {
-        "test": "./node_modules/.bin/phantomjs test/run-jasmine.js test/runner.html"
+        "pretest": "edp webserver start",
+        "test": "phantomjs test/run-jasmine.js http://localhost:8848/test/runner.html",
+        "posttest": "edp webserver stop"
     },
     "devDependencies": {
-        "phantomjs": "~1.9"
+        "phantomjs": "~1.9",
+        "saber-ajax": "~0.1.3",
+        "edp-webserver" : "1.x"
     },
     "license": "MIT",
     "repository": "git://github.com/ecomfe/saber-log.git",
