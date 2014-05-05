@@ -167,8 +167,10 @@ define(function() {
             return false;
         }
         var title;
-        // 如果是表单元素
-        if (type === 'input') {
+        if (tag == 'a') {
+            title = _target.innerHTML;
+        } else if (type === 'input') {
+            // 如果是表单元素
             if(/input|textarea/.test(tag)) {
                 title = _target.value;
                 if (_target.type && _target.type.toLowerCase() === 'password') {

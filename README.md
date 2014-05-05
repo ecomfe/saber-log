@@ -1,23 +1,43 @@
-saber-lang [![Build Status](https://travis-ci.org/ecomfe/saber-lang.png)](https://travis-ci.org/ecomfe/saber-lang)
+saber-log [![Build Status](https://travis-ci.org/ecomfe/saber-log.png)](https://travis-ci.org/ecomfe/saber-log)
 ===
 
-适合移动端的 **语言增强** 模块。
+为使用saber框架的知心各行业手机端提供nsclick统计支持。
 
 ## Usage
 
-通过`edp`引入模块：
+0. 通过`edp`引入模块：
 
-    edp import saber-lang
+    edp import saber-log
 
-```javascript
-require( [ 'saber-lang' ], function( lang ) {
-    var targetObj = { x: 1, y: 2 };
-    var sourceObj = { y: 3, z: 4 };
-    lang.extend( targetObj, sourceObj );
+1. 在`src/app.js`开头处添加
+    ```javascript
+    var log = require('saber-log');
+    log.addDefaultLog({
+        'fr' : 'wise-zhixin',
+        'pvid' : (new Date()).getTime(),
+        'pid' : 341
+    });
+    log.on();
+    ```
 
-    console.log( targetObj ); // { x: 1, y: 3, z: 4 }
-});
-```
+2. 在`src/app.js`的`loadAction`方法内添加
+    ```javascript
+    log.addDefaultLog({
+        'page' : url,
+        'refer' : document.referrer
+    });
+    log.sendLog({
+        'act': 'pv'
+    });
+    ```
+3. 在需要发送log处添加自定义属性，如
+    ```html
+    <a href="xxx" data-click='{"act":"a_some_act","mod":"content"}' data-log="btn">xxx</a>
+    ```
+
+4. 详细nsclick参数标准请参考  
+    [NSCLICK上线流程](http://wiki.babel.baidu.com/twiki/bin/view/Ps/OP/NSCLICK%E4%B8%8A%E7%BA%BF%E6%B5%81%E7%A8%8B)
+    [大搜中间页点击日志规范](http://wiki.babel.baidu.com/twiki/pub/Ps/Rank/UbsTopic/Middle_page/%E5%A4%A7%E6%90%9C%E7%B4%A2%E4%B8%AD%E9%97%B4%E9%A1%B5%E7%82%B9%E5%87%BB%E6%97%A5%E5%BF%97%E8%A7%84%E8%8C%83v0.4.pdf)
 
 ## API
 

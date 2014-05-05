@@ -45,7 +45,7 @@ define(function() {
         for (var index in arr) {
             var tmp = arr[index].split('=');
             if (tmp[1].length != 0) {
-                result[tmp[0]] = tmp[1];
+                result[tmp[0]] = decodeURIComponent(tmp[1]);
             }
         }
         return result;
@@ -90,7 +90,8 @@ define(function() {
                 'pvid' : pvid,
                 'mod' : 'test',
                 'xpath' : 'ul-li4-a(btn)',
-                'url' : encodeURIComponent('http://localhost:8848/test/runner.html#')
+                'url' : 'http://localhost:8848/test/runner.html#',
+                'txt' : 'Click Here!'
             });
         });
     });
