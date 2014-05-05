@@ -11,11 +11,11 @@ define(function() {
 
     // 设置默认参数
     logger.setLogUrl('http://localhost:8848/v.gif?');
-    var pvid = (new Date()).getTime();
+    var pvid = (new Date()).getTime().toString();
     logger.addDefaultLog({
         'fr' : 'saber-log-test',
         'pvid' : pvid,
-        'pid' : 0,
+        'pid' : '0',
         'page' : 'saber-log-test-page'
     });
 
@@ -44,7 +44,9 @@ define(function() {
         var result = {};
         for (var index in arr) {
             var tmp = arr[index].split('=');
-            result[tmp[0]] = tmp[1];
+            if (tmp[1].length != 0) {
+                result[tmp[0]] = tmp[1];
+            }
         }
         return result;
     }
@@ -58,12 +60,12 @@ define(function() {
             });
         });
 
-        it('pvLog', function() {
+        it('correctness', function() {
             expect(log).toEqual({
                 'act' : 'pv',
                 'fr' : 'saber-log-test',
                 'page' : 'saber-log-test-page',
-                'pid' : 0,
+                'pid' : '0',
                 'pvid' : pvid
             });
         });
@@ -78,16 +80,18 @@ define(function() {
             });
         });
 
-        it('clickLog', function() {
-            console.log('clickLog');
-            console.log(log);
-            // expect(log).toEqual({
-            //     'act' : 'pv',
-            //     'fr' : 'saber-log-test',
-            //     'page' : 'saber-log-test-page',
-            //     'pid' : 0,
-            //     'pvid' : pvid
-            // });
+        it('correctness', function() {
+            // expect(true).toBe(true);
+            expect(log).toEqual({
+                'act' : 'b_test',
+                'fr' : 'saber-log-test',
+                'page' : 'saber-log-test-page',
+                'pid' : '0',
+                'pvid' : pvid,
+                'mod' : 'test',
+                'xpath' : 'ul-li4-a(btn)',
+                'url' : encodeURIComponent('http://localhost:8848/test/runner.html#')
+            });
         });
     });
 }) 

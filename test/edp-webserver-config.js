@@ -5,17 +5,17 @@
  * description
  */
 var fs = require('fs');
-var LOG_FILE = '.saber.log';
+var LOG_FILE = __dirname + '\\.saber.log';
+if (fs.existsSync(LOG_FILE)) {
+    fs.unlinkSync(LOG_FILE);
+}
 
 exports.port = 8848;
-exports.documentRoot = __dirname;
+exports.documentRoot = __dirname + '\\..\\';
 exports.getLocations = function() {
     return [{
         location: /v\.gif/,
         handler: function(context) {
-            if (fs.existsSync(LOG_FILE)) {
-                fs.unlinkSync(LOG_FILE);
-            }
             // /v.gif?a=1&b=2
             fs.appendFileSync(LOG_FILE, context.request.url + '\n');
         }
@@ -26,16 +26,26 @@ exports.getLocations = function() {
                 context.status = 500;
             } else {
                 var type = context.request.url.match(/getLog\?type=(.+)/)[1];
-                var arr = fs.readFileSync(LOG_FILE).trim().split('\n');
-                for (var i in arr) {
-                    if (arr[i].indexOf(type) != -1) {
-                        context.status = 200;
-                        context.content = arr[i];
-                        break;
-                    }
+                var arr = fs.readFileSync(LOG_FILE).toString('utf-8').trim().split('\n');
+                var pvLog, clickLog;
+                // 读最后两条
+                if (arr[arr.length - 1].indexOf('act=pv') != -1) {
+                    pvLog = arr[arr.length - 1];
+                    clickLog = arr[arr.length - 2];
+                } else {
+                    pvLog = arr[arr.length - 2];
+                    clickLog = arr[arr.length - 1];
                 }
+                context.status = 200;
+                context.content = (type == 'pv' ? pvLog : clickLog);
             }
         }
+    }, { 
+        location: /^.*$/, 
+        handler: [
+            file(),
+            proxyNoneExists()
+        ]
     }]
 }
 

@@ -166,7 +166,7 @@ define(function() {
         if (!type) {
             return false;
         }
-        var title = '';
+        var title;
         // 如果是表单元素
         if (type === 'input') {
             if(/input|textarea/.test(tag)) {
@@ -207,13 +207,13 @@ define(function() {
                 }
             }
         }
-        title = title.trim();
+        title && (title = title.trim());
         /**
          * xpath值
          */
         var xpath = path.join('-').toLowerCase() + '(' + type + ')';
         lang.extend(logData, {
-            'txt': title,
+            'txt': title || '',
             'xpath': xpath,
             'url': url || '',
             'act': logData['act'] || act
