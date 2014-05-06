@@ -36,7 +36,7 @@ saber-log [![Build Status](https://travis-ci.org/ecomfe/saber-log.png)](https://
     ```
 
 4. 详细nsclick参数标准请参考  
-    [NSCLICK上线流程](http://wiki.babel.baidu.com/twiki/bin/view/Ps/OP/NSCLICK%E4%B8%8A%E7%BA%BF%E6%B5%81%E7%A8%8B)
+    [NSCLICK上线流程](http://wiki.babel.baidu.com/twiki/bin/view/Ps/OP/NSCLICK%E4%B8%8A%E7%BA%BF%E6%B5%81%E7%A8%8B)  
     [大搜中间页点击日志规范](http://wiki.babel.baidu.com/twiki/pub/Ps/Rank/UbsTopic/Middle_page/%E5%A4%A7%E6%90%9C%E7%B4%A2%E4%B8%AD%E9%97%B4%E9%A1%B5%E7%82%B9%E5%87%BB%E6%97%A5%E5%BF%97%E8%A7%84%E8%8C%83v0.4.pdf)
 
 ## API

@@ -19,9 +19,9 @@
     "saber-lang": "~0.3.1"
   },
   "scripts": {
-    "pretest": "edp webserver start --config=test/edp-webserver-config.js",
+    "pretest": "node test/ws.js start",
     "test": "phantomjs test/run-jasmine.js http://localhost:8848/test/runner.html",
-    "posttest": "edp webserver stop"
+    "posttest": "node test/ws.js stop"
   },
   "devDependencies": {
     "phantomjs": "~1.9.7-5",
