@@ -41,76 +41,53 @@ saber-log [![Build Status](https://travis-ci.org/ecomfe/saber-log.png)](https://
 
 ## API
 
-### Base
+### .setLogUrl( url )
 
-`Base` 部分是最基础的语言增强函数，在 `require('saber-lang')` 时加载。
+设置日志发送域名。默认为`http://nsclick.baidu.com/v.gif?`
 
-#### .extend( target, ...source )
+### .addDefaultLog( options )
 
-对象属性拷贝。
+设置日志默认参数。这些参数在每次发送时都会被带上，因此常用来设置基本不变的值，例如和应用相关的信息。
 
-#### .inherits( subClass, superClass )
+options可选值请参考
+[大搜中间页点击日志规范](http://wiki.babel.baidu.com/twiki/pub/Ps/Rank/UbsTopic/Middle_page/%E5%A4%A7%E6%90%9C%E7%B4%A2%E4%B8%AD%E9%97%B4%E9%A1%B5%E7%82%B9%E5%87%BB%E6%97%A5%E5%BF%97%E8%A7%84%E8%8C%83v0.4.pdf)  
 
-为类型构造器建立继承关系。
+常用值有：
 
-#### .curry( fn, ...args )
+* `options.fr` `string` 来源，如`ps-zhixin`等
+* `options.pid` `string|number` 区分日志id，各产品线参考
+[nsclick目前的pid列表](http://wiki.babel.baidu.com/twiki/bin/view/Ps/OP/NSCLICK%E4%B8%8A%E7%BA%BF%E6%B5%81%E7%A8%8B#%E7%9B%AE%E5%89%8D%E7%9A%84pid%E5%88%97%E8%A1%A8%EF%BC%8C%E6%B2%A1%E6%9C%89%E8%A2%AB%E8%AE%B0%E5%BD%95%E4%B8%8D%E8%B4%9F%E8%B4%A3%E7%BB%B4%E6%8A%A4)
+* `options.pvid` `string` 记录一次pv的唯一id，一个页面上所有pvid相同，通常取页面载入时的时间戳或由后端提供
+* `options.qid` `string` 大搜一次检索唯一标示，用来merge大搜和中间页的点击日志
+* `options.page` `string` 当前页面url
+* `options.refer` `string` 当前页面访问的referer
 
-为函数提前绑定前置参数（[柯里化](http://en.wikipedia.org/wiki/Currying)）。
+### .sendLog( options )
 
-#### .bind( fn, thisArg, ...args )
+手动发送一条日志。参数`options`会与和`.addDefaultLog`的参数合并，如果相同以`.sendLog`为准。  
+常用来发送pv日志。点击日志由属性`data-log`,`data-click`等自行识别发送，不需要手动调用发送。
 
-为函数绑定this与前置参数。
+### .on()
 
-### Function
+为当前document.body绑定点击(`click`)事件，用以自行识别并发送日志。  
+对于普通应用，在新页面载入时调用一次。  
+对于单页应用(如`saber`)，全局调用一次即可。  
 
-`Function` 类的语言增强函数都需要指定完整路径引入，如 `require('saber-lang/function/throttle')`。
+### .un()
 
-#### .throttle( fn, wait [, options] )
+为当前document.body解绑点击(`click`)事件。
 
-函数节流 (忽略指定间隔内的函数调用)
+## Test
 
-+ `fn` `{Function}` 执行函数
-+ `wait` `{number}` 下次执行前需等待的`毫秒`数(即`节流阀值`)
-+ `options` `{Object=}` 配置对象
-    + `options.leading` `{boolean=}` 是否首次立即执行一次`fn`, 默认`true`
-    + `options.trailing` `{boolean=}` 是否停止后延迟执行一次`fn`, 默认`true`
-    + `options.context` `{*=}` `fn`执行时的上下文环境, 默认`this`
+启动测试服务器
 
-#### .debounce( fn, wait [, immediate] )
+    $ node test/server.js
 
-函数去抖 (指定间隔内的调用被延迟到下个间隔执行)
+默认端口为`8848`，可以通过参数修改：
 
-+ `fn` `{Function}` 执行函数
-+ `wait` `{number}` 需要延迟等待的间隔(`毫秒`)
-+ `immediate` `{boolean=}` 是否延迟启动前先立即调用执行`fn`
+    $ node test/server.js 8080
 
-#### aspect.mixin( obj )
-
-为指定对象混入`AOP`功能
-
-+ `before`
-
-	```javascript
-	obj.before( method, fn[, context] )
-	```
-
-	在 `obj` 的 `method` 方法调用前，先调用 `fn` 函数
-	
-	* `fn` 执行时的 `形参` 与 `obj[ method ]` 的一致
-	* `context` 指定时，`fn` 的 `this` 指向 `context`
-	* `fn` 返回 `false` 时，`中断`后续的所有调用
-
-+ `after`
-
-	```javascript
-	obj.after( method, fn[, context] )
-	```
-
-	在 `obj` 的 `method` 方法调用后，调用 `fn` 函数
-	
-	* `fn` 执行时的 `形参` 与 `obj[ method ]` 的一致
-	* `context` 指定时，`fn` 的 `this` 指向 `context`
-
+访问`http://localhost:8848/test/runner.html`
 
 
 ===
