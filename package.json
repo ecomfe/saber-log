@@ -1,7 +1,7 @@
 {
   "name": "saber-log",
   "version": "0.1.0",
-  "description": "为知心所有行业提供nsclick统计模块",
+  "description": "监控日志模块",
   "main": "main",
   "maintainers": [
     {
@@ -24,8 +24,8 @@
     "posttest": "node test/ws.js stop"
   },
   "devDependencies": {
-    "phantomjs": "~1.9.7-5",
-    "saber-ajax": "~0.1.3"
+    "saber-ajax": "~0.1.3",
+    "phantomjs": "~1.9.7-5"
   },
   "license": "MIT",
   "repository": "git://github.com/ecomfe/saber-log.git",
