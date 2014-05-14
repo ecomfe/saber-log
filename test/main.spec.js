@@ -5,14 +5,14 @@
  * saber-log test
  */
 
-define(function() {
+define(function(require) {
     var logger = require('saber-log');
     var ajax = require('saber-ajax');
 
     // 设置默认参数
     logger.setLogUrl('http://localhost:8848/v.gif?');
     var pvid = (new Date()).getTime().toString();
-    logger.addDefaultLog({
+    logger.setDefaultLog({
         'fr' : 'saber-log-test',
         'pvid' : pvid,
         'pid' : '0',
@@ -81,7 +81,6 @@ define(function() {
         });
 
         it('correctness', function() {
-            // expect(true).toBe(true);
             expect(log).toEqual({
                 'act' : 'b_test',
                 'fr' : 'saber-log-test',

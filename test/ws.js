@@ -1,6 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var PID_FILE = __dirname + '\\.server.pid';
+var LOG_FILE = __dirname + '\\.saber.log';
 
 function getServerPID() {
     var pid = 0;
@@ -35,6 +36,7 @@ commandHandler.stop = function () {
 
     if (pid) {
         fs.unlinkSync(PID_FILE);
+        fs.unlinkSync(LOG_FILE);
         process.kill(pid, 'SIGKILL');
         console.log('server stop');
     }

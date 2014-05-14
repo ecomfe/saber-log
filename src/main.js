@@ -4,7 +4,7 @@
  * @description
  * saber-log主文件
  */
-define(function() {
+define(function(require) {
 
     var lang = require('saber-lang');
 
@@ -17,7 +17,7 @@ define(function() {
      * 发送日志的目的地
      * @type {string}
      */
-    var LOG_URL = 'http://nsclick.baidu.com/v.gif?';
+    var LOG_URL = null;
 
     /**
      * 每次发会附加的参数
@@ -84,6 +84,11 @@ define(function() {
     function collectLogData() {
         clearLogData();
 
+        if (LOG_URL == null) {
+            throw new Exception('LOG_URL must be set by calling .setLogUrl(url)');
+            return;
+        }
+
         var target = _target;
         /**
          * 本次统计的数据
@@ -124,8 +129,7 @@ define(function() {
             if (logStr) {
                 try {
                     logData = lang.extend({}, JSON.parse(logStr), logData);
-                } 
-                catch(e) {}
+                } catch(e) {}
             }
             if (target.href) {
                 url = target.href;
@@ -147,8 +151,7 @@ define(function() {
                        count++;
                    }
                    sibling = sibling.previousSibling;
-                }
-                while (sibling);
+                } while (sibling);
             }
             path[i++] = target.tagName + (count > 1 ? count : '');
             if (target.getAttribute('data-id')) {
@@ -256,6 +259,7 @@ define(function() {
     var exports = {
         /**
          * 发送日志
+         * @param {Object} param 需要发送的日志内容，会与setDefaultLog的参数合并
          */
         sendLog: sendLog,
         /**
@@ -268,14 +272,14 @@ define(function() {
         un: unbind,
         /**
          * 添加默认参数
-         * @param {Object} data
+         * @param {Object} data 每次发送都会附带的参数
          */
-        addDefaultLog: function(data) {
+        setDefaultLog: function(data) {
             lang.extend(_defaultLog, data);
         },
         /**
          * 设置发送日志域名
-         * @param {string} url
+         * @param {string} url 接收日志的域名
          */
         setLogUrl: function(url) {
             LOG_URL = url;
