@@ -13,7 +13,8 @@ var MIME_TYPES = {
 var IS_SILENT = false;
 
 var fs = require('fs');
-var LOG_FILE = __dirname + '\\.saber.log';
+var path = require('path');
+var LOG_FILE = path.resolve(__dirname, '.saber.log');
 if (fs.existsSync(LOG_FILE)) {
     fs.unlinkSync(LOG_FILE);
 }
@@ -22,16 +23,6 @@ function log(msg) {
     if (!IS_SILENT) {
         console.log('[Server]' + msg);
     }
-}
-
-function extend(target, source) {
-    for (var key in source) {
-        if (source.hasOwnProperty(key)) {
-            target[key] = source[key];
-        }
-    }
-
-    return target;
 }
 
 function createResponse(response, data) {
@@ -86,90 +77,6 @@ function getStatic(pathname) {
         content: fs.readFileSync(file),
         mimetype: MIME_TYPES[path.extname(file).substring(1)] || 'text/html'
     };
-}
-
-/**
- * 解析Form-Data数据
- * 简单方式处理
- *
- * @inner
- * @param {string} str 请求参数
- */
-function parseFormData(str) {
-    var res = {};
-    var regexp = new RegExp('Content-Disposition:\\s+form-data;\\s+name="([^"]+)"', 'g');
-
-    var finded;
-    var i;
-    var dataToken;
-    var endToken;
-    var token;
-    var name;
-    while(finded = regexp.exec(str)) {
-        name = RegExp.$1;
-        dataToken = [];
-        endToken = [];
-        i = regexp.lastIndex;
-        while (i < str.length 
-            && (str.charAt(i) == '\r' || str.charAt(i) == '\n')
-        ) {
-            i++;
-        }
-        while (i < str.length) {
-            token = str.charAt(i);
-            dataToken.push(token);
-            if (token == '-') {
-                endToken.push(token);
-            }
-            else {
-                endToken = [];
-            }
-            if (endToken.length >= 6) {
-                dataToken.splice(
-                    dataToken.length - endToken.length, 
-                    endToken.length
-                );
-                dataToken = dataToken.join('').trim();
-                if (res[name]) {
-                    res[name] = [res[name]];
-                    res[name].push(dataToken);
-                }
-                else {
-                    res[name] = dataToken;
-                }
-                break;
-            }
-            i++;
-        }
-    }
-    return res;
-}
-
-/**
- * 获取POST数据
- * 按文本解析，不支持file
- *
- * @inner
- * @param {Object} request
- * @param {Function(Object)} callback
- */
-function getPostData(request, callback) {
-    var data = [];
-
-    request.on('data', function (chunk) {
-        data.push(chunk);
-    });
-
-    request.on('end', function () {
-        data = data.join('');
-        if (data.indexOf('Content-Disposition: form-data;') >= 0) {
-            data = parseFormData(data);
-        }
-        else {
-            data = require('querystring').parse(data);
-        }
-        callback(data);
-    });
 }
 
 var actionList = {};

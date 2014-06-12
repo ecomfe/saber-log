@@ -24,28 +24,28 @@ define(function(require) {
      * @type {Object}
      * @private
      */
-    var _defaultLog = { }; 
+    var innerDefaultLog = { }; 
 
     /**
      * 记录本次发送的日志数据
      * @type {Object}
      * @private
      */
-    var _logData = { };
+    var innerLogData = { };
 
     /**
      * 本次事件的target
      * @type {Node|undefined}
      * @private
      */
-    var _target;
+    var innerTarget;
 
     /**
      * 事件
      * @type {Event}
      * @private
      */
-    var _event;
+    var innerEvent;
 
     /**
      * 发送日志
@@ -54,7 +54,7 @@ define(function(require) {
     function sendLog(params) {
         var parameters = {};
 
-        lang.extend(parameters, _defaultLog);
+        lang.extend(parameters, innerDefaultLog);
         lang.extend(parameters, params);
 
         var tmpUrl = [];
@@ -73,23 +73,18 @@ define(function(require) {
 
     function addLogData(data) {
         if (data) {
-            lang.extend(_logData, data);
+            lang.extend(innerLogData, data);
         }
     }
 
     function clearLogData() {
-        _logData = { };
+        innerLogData = { };
     }
 
     function collectLogData() {
         clearLogData();
 
-        if (LOG_URL == null) {
-            throw new Exception('LOG_URL must be set by calling .setLogUrl(url)');
-            return;
-        }
-
-        var target = _target;
+        var target = innerTarget;
         /**
          * 本次统计的数据
          */
@@ -161,41 +156,41 @@ define(function(require) {
         }
         path.reverse();
 
-        var tag = _target.tagName.toLowerCase();
+        var tag = innerTarget.tagName.toLowerCase();
         if (!type && /^(a|img|input|button|select|datalist|textarea)$/.test(tag)) {
             type = {a: 'link'}[tag] || 'input';
-            url = _target.href || _target.src || url;
+            url = innerTarget.href || innerTarget.src || url;
         }
         if (!type) {
             return false;
         }
         var title;
         if (tag == 'a') {
-            title = _target.innerHTML;
+            title = innerTarget.innerHTML;
         } else if (type === 'input') {
             // 如果是表单元素
             if(/input|textarea/.test(tag)) {
-                title = _target.value;
-                if (_target.type && _target.type.toLowerCase() === 'password') {
+                title = innerTarget.value;
+                if (innerTarget.type && innerTarget.type.toLowerCase() === 'password') {
                     title = '';
                 }
             } else if (/select|datalist/.test(tag)) {
-                if (_target.children.length > 0) {
-                    var index = _target.selectedIndex || 0;
-                    title = _target.children[index > -1 ? index : 0].innerHTML;
+                if (innerTarget.children.length > 0) {
+                    var index = innerTarget.selectedIndex || 0;
+                    title = innerTarget.children[index > -1 ? index : 0].innerHTML;
                 }
             } else {
-                title = _target.innerText || _target.value || '';
+                title = innerTarget.innerText || innerTarget.value || '';
             }
         } else {
             // 如果是图片，先取其title
             if (tag === 'img') {
-                title = _target.title;
+                title = innerTarget.title;
             }
 
             // title为空，遍历父节点
             if (!title) {
-                var el = _target;
+                var el = innerTarget;
                 while (i > 0) {
                     i--;
                     if (/^a\d*\b/i.test(path[i])) {
@@ -233,15 +228,15 @@ define(function(require) {
     /**
      * 事件的handler
      */
-    function _eventHandler(event) {
-        _event = event;
-        _target = event.target;
+    function eventHandler(event) {
+        innerEvent = event;
+        innerTarget = event.target;
 
         // 如果collectLogData返回false，则不发送日志
         if (collectLogData() === false) {
             return;
         }
-        sendLog(_logData);
+        sendLog(innerLogData);
     }
 
     function bind() {
@@ -249,11 +244,14 @@ define(function(require) {
             return;
         }
         isInited = true;
-        document.body.addEventListener('click', _eventHandler);
+        if (LOG_URL == null) {
+            LOG_URL = 'http://nsclick.baidu.com/v.gif?';
+        }
+        document.body.addEventListener('click', eventHandler);
     }
 
     function unbind() {
-        document.body.removeEventListener('click', _eventHandler);
+        document.body.removeEventListener('click', eventHandler);
     }
 
     var exports = {
@@ -275,7 +273,7 @@ define(function(require) {
          * @param {Object} data 每次发送都会附带的参数
          */
         setDefaultLog: function(data) {
-            lang.extend(_defaultLog, data);
+            lang.extend(innerDefaultLog, data);
         },
         /**
          * 设置发送日志域名

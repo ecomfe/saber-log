@@ -1,7 +1,7 @@
 var fs = require('fs');
 var path = require('path');
-var PID_FILE = __dirname + '\\.server.pid';
-var LOG_FILE = __dirname + '\\.saber.log';
+var PID_FILE = path.resolve(__dirname, '.server.pid');
+var LOG_FILE = path.resolve(__dirname, '.saber.log');
 
 function getServerPID() {
     var pid = 0;
