@@ -4,7 +4,7 @@
  * @description
  * saber-log主文件
  */
-define(function(require) {
+define(function (require) {
 
     var lang = require('saber-lang');
 
@@ -24,14 +24,14 @@ define(function(require) {
      * @type {Object}
      * @private
      */
-    var innerDefaultLog = { }; 
+    var innerDefaultLog =  {};
 
     /**
      * 记录本次发送的日志数据
      * @type {Object}
      * @private
      */
-    var innerLogData = { };
+    var innerLogData = {};
 
     /**
      * 本次事件的target
@@ -58,12 +58,12 @@ define(function(require) {
         lang.extend(parameters, params);
 
         var tmpUrl = [];
-        for (var key in parameters) {
+        Object.keys(parameters).forEach(function (key) {
             tmpUrl.push(key + '=' + encodeURIComponent(parameters[key]));
-        }
+        });
         var url = tmpUrl.join('&');
         var img = new Image();
-        img.onload = img.onerror = img.onabort = function() {
+        img.onload = img.onerror = img.onabort = function () {
             img.onload = img.onerror = img.onabort = null;
             img = null;
         };
@@ -78,7 +78,7 @@ define(function(require) {
     }
 
     function clearLogData() {
-        innerLogData = { };
+        innerLogData = {};
     }
 
     function collectLogData() {
@@ -120,11 +120,12 @@ define(function(require) {
                 return false;
             }
             // 添加标签上的data-click数据
-            logStr = target.getAttribute('data-click');
+            var logStr = target.getAttribute('data-click');
             if (logStr) {
                 try {
                     logData = lang.extend({}, JSON.parse(logStr), logData);
-                } catch(e) {}
+                }
+                catch (e) {}
             }
             if (target.href) {
                 url = target.href;
@@ -132,7 +133,7 @@ define(function(require) {
                 act = target.getAttribute('target') === '_blank' ? 'a' : act;
             }
             // 如果target上有data-log属性，并且data-log=button, link等，则需要发送统计
-            var dataLogAttr = target.getAttribute('data-log')
+            var dataLogAttr = target.getAttribute('data-log');
             if (typeReg.test(dataLogAttr)) {
                 type = RegExp.$1.toLowerCase();
             }
@@ -142,11 +143,13 @@ define(function(require) {
                 var sibling = target.previousSibling;
                 do {
                     if (sibling.nodeType === 1
-                        && sibling.tagName === target.tagName) {
-                       count++;
-                   }
-                   sibling = sibling.previousSibling;
-                } while (sibling);
+                        && sibling.tagName === target.tagName
+                    ) {
+                        count++;
+                    }
+                    sibling = sibling.previousSibling;
+                }
+                while (sibling);
             }
             path[i++] = target.tagName + (count > 1 ? count : '');
             if (target.getAttribute('data-id')) {
@@ -165,24 +168,28 @@ define(function(require) {
             return false;
         }
         var title;
-        if (tag == 'a') {
+        if (tag === 'a') {
             title = innerTarget.innerHTML;
-        } else if (type === 'input') {
+        }
+        else if (type === 'input') {
             // 如果是表单元素
-            if(/input|textarea/.test(tag)) {
+            if (/input|textarea/.test(tag)) {
                 title = innerTarget.value;
                 if (innerTarget.type && innerTarget.type.toLowerCase() === 'password') {
                     title = '';
                 }
-            } else if (/select|datalist/.test(tag)) {
+            }
+            else if (/select|datalist/.test(tag)) {
                 if (innerTarget.children.length > 0) {
                     var index = innerTarget.selectedIndex || 0;
                     title = innerTarget.children[index > -1 ? index : 0].innerHTML;
                 }
-            } else {
+            }
+            else {
                 title = innerTarget.innerText || innerTarget.value || '';
             }
-        } else {
+        }
+        else {
             // 如果是图片，先取其title
             if (tag === 'img') {
                 title = innerTarget.title;
@@ -197,7 +204,8 @@ define(function(require) {
                         url = el.href;
                         title = el.innerText;
                         break;
-                    } else {
+                    }
+                    else {
                         if (typeReg.test(el.getAttribute('data-log'))) {
                             title = el.innerText;
                             break;
@@ -272,14 +280,14 @@ define(function(require) {
          * 添加默认参数
          * @param {Object} data 每次发送都会附带的参数
          */
-        setDefaultLog: function(data) {
+        setDefaultLog: function (data) {
             lang.extend(innerDefaultLog, data);
         },
         /**
          * 设置发送日志域名
          * @param {string} url 接收日志的域名
          */
-        setLogUrl: function(url) {
+        setLogUrl: function (url) {
             LOG_URL = url;
         }
     };
